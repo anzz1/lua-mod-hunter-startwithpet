@@ -53,13 +53,16 @@ local PET_SPELLS = {
     136    -- Mend Pet (Rank 1)
 }
 
+local PET_STARTWITH_HAPPINESS = 500000
+
 ------------------------------------------------------------------------------------------------
 -- END CONFIG
 ------------------------------------------------------------------------------------------------
 
 if (not EnableModule) then return end
-local FILE_NAME      = string.match(debug.getinfo(1,'S').source, "[^/\\]*.lua$")
-local CLASS_HUNTER   = 3
+local FILE_NAME        = string.match(debug.getinfo(1,'S').source, "[^/\\]*.lua$")
+local CLASS_HUNTER     = 3
+local POWER_HAPPINESS  = 4
 
 local function loadPetDB()
     PET_NPC_DB = {}
@@ -71,7 +74,7 @@ local function loadPetDB()
     elseif(GetCoreName() == "TrinityCore" or GetCoreName() == "AzerothCore") then
         Query = WorldDBQuery("SELECT Entry, MaxLevel FROM creature_template WHERE Type=1 AND Type_Flags&1 <> 0 AND Type_Flags&65536 = 0 AND Family!=0 AND rank IN (0,1,5) ORDER BY MaxLevel ASC;")
     end
-    
+
     if(Query) then
         repeat
             table.insert(PET_NPC_DB, {Query:GetUInt32(0), Query:GetUInt32(1)})
@@ -104,6 +107,10 @@ local function onFirstLogin(event, player)
         local pet = PerformIngameSpawn(1, PET_NPC_DB[math.random(1,maxidx)][1], player:GetMapId(), player:GetInstanceId(), player:GetX()+math.cos(player:GetO()-math.pi/2), player:GetY()+math.sin(player:GetO()-math.pi/2), player:GetZ(), player:GetO(), false, 5000)
         pet:SetFaction(35)
         player:CastSpell(pet, 2650, true)
+        local guid = player:GetPetGUID()
+        if(guid) then
+            player:GetMap():GetWorldObject(guid):ToUnit():SetPower(PET_STARTWITH_HAPPINESS, POWER_HAPPINESS)
+        end
     end
 end
 
