@@ -53,6 +53,12 @@ local PET_SPELLS = {
     136    -- Mend Pet (Rank 1)
 }
 
+-- Pet happiness values
+-- Unhappy =      0 - 333000
+-- Content = 333001 - 666000
+-- Happy   = 666001 - 1050000
+-- Default = 166500 (Unhappy)
+
 local PET_STARTWITH_HAPPINESS = 500000
 
 ------------------------------------------------------------------------------------------------
